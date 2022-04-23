@@ -1,0 +1,10 @@
+task:
+  name: "Builder"
+  timeout_in: 120m
+  container:
+      image: navin136/builder:latest
+      cpu: 8
+      memory: 20G
+
+  Build_script:
+      - curl -sL https://raw.githubusercontent.com/navin136/worker_of_navin/master/script.sh | bash
