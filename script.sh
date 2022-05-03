@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Dir
+rclone mount --daemon navin: /root/rom/
+cd /root/rom/
+
 # Variables
-export HOME=/tmp
 
 export MNFST="https://github.com/ArrowOS/android_manifest"
 export MNFST_REV="arrow-12.1"
@@ -28,9 +31,6 @@ export ZIP_NAME="Arrow*.zip"
 
 # Sync
 
-mkdir work
-cd work
-
 repo init --depth=1 -u $MNFST -b $MNFST_REV || { echo "Failed to Init repo !!!" && exit 1; }
 repo sync --force-sync --no-tags --no-clone-bundle --prune -j$(nproc --all)
 repo sync -j1 --fail-fast || { echo "Failed to Sync !!!" && exit 1; } # Sync Again to avoid Partial Sync
@@ -46,14 +46,14 @@ ccache -M 32G
 
 source b*/e*
 lunch ${LUNCH_COMBO} || { echo "Failed to Lunch !!!" && exit 1; }
-make bacon -j$(nproc --all) || { echo "Failed to make target !!!" && exit 1; }
+timeout 110m make bacon -j$(nproc --all) || { echo "Failed to make target !!!" && exit 1; }
 
 # Upload
 
-cd out/target/product/${DEVICE}
+#cd out/target/product/${DEVICE}
 
-curl -T $ZIP_NAME https://oshi.at/${ZIP_NAME} > mirror.txt || { echo "Failed to Mirror Build Zip !!!" && exit 1; }
+#curl -T $ZIP_NAME https://oshi.at/${ZIP_NAME} > mirror.txt || { echo "Failed to Mirror Build Zip !!!" && exit 1; }
 
-MIRROR_LINK=$(cat mirror.txt | grep Download | cut -d\  -f1)
+#MIRROR_LINK=$(cat mirror.txt | grep Download | cut -d\  -f1)
 
-echo "Mirror: ${MIRROR_LINK}"
+#echo "Mirror: ${MIRROR_LINK}"
